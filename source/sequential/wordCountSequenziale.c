@@ -5,6 +5,8 @@
 
 #define MAX_WORD_LENGTH 100
 #define MAX_FILENAME_LENGTH 256
+#define CSV_OUTPUT_SEQ "word_count_seq.csv"
+#define DEBUG
 
 typedef struct {
     char word[MAX_WORD_LENGTH];
@@ -81,8 +83,14 @@ void writeCSV(char* filename, WordCount* wordCounts, int count) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf("Utilizzo: %s <cartella>\n", argv[0]);
+        #ifdef DEBUG
+            printf("Nessuna cartella passata come argomento\n");
+        #endif
         return 1;
+    }else{
+        #ifdef DEBUG
+            printf("Utilizzo la cartella: %s\n", argv[1]);
+        #endif
     }
 
     char *directory = argv[1];
@@ -93,11 +101,13 @@ int main(int argc, char *argv[]) {
     processDirectory(directory, wordCounts, &count);
 
     char outputFilename[MAX_FILENAME_LENGTH];
-    snprintf(outputFilename, sizeof(outputFilename), "%s/word_count.csv", directory);
+    snprintf(outputFilename, sizeof(outputFilename), CSV_OUTPUT_SEQ, directory);
 
     writeCSV(outputFilename, wordCounts, count);
 
-    printf("Word count completato! Risultati salvati in %s\n", outputFilename);
+    #ifdef DEBUG
+        printf("Word count completato! Risultati salvati in %s\n", outputFilename);
+    #endif
 
     return 0;
 }
