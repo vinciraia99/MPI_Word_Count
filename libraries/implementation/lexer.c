@@ -44,8 +44,8 @@ Word_occurrence* create_inf_to_send(GHashTable* hash, int  *num_occ){
         lexeme = lexems[i]; 
         lookup = g_hash_table_lookup(hash,lexeme); 
         occ =  GPOINTER_TO_INT(lookup);
-        occurrences[i].num = occ;
-        strncpy(occurrences[i].word, lexeme, 46);  
+        occurrences[i].numero_ripetizioni = occ;
+        strncpy(occurrences[i].parola, lexeme, 46);  
         free(lexeme);
     }
 

@@ -4,8 +4,8 @@
 
 typedef struct Word_occurrence{
 
-    int num;
-    char word[46];
+    int numero_ripetizioni;
+    char parola[46];
 
 } Word_occurrence;
 
