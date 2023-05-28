@@ -43,48 +43,67 @@ void swap(Word_occurrence *a, Word_occurrence *b) {
 // function to find the partition position
 int partition(Word_occurrence * array, int low, int high) {
   
-  // select the rightmost element as pivot
+  // selezionare l'elemento più a destra come perno
   int pivot = array[high].numero_ripetizioni;
   
-  // pointer for greater element
+  // puntatore per l'elemento maggiore
   int i = (low - 1);
 
-  // traverse each element of the array
-  // compare them with the pivot
+  // attraversare ogni elemento dell'array
+  // confrontarli con il pivot
   for (int j = low; j < high; j++) {
     if (array[j].numero_ripetizioni >= pivot) {
         
-      // if element smaller than pivot is found
-      // swap it with the greater element pointed by i
+      // se viene trovato un elemento più piccolo del pivot
+      // lo scambia con l'elemento maggiore indicato da i
       i++;
       
-      // swap element at i with element at j
+      // scambiare l'elemento in i con l'elemento in j
       swap(&array[i], &array[j]);
     }
   }
 
-  // swap the pivot element with the greater element at i
+  // scambiare l'elemento cardine con l'elemento maggiore in i
   swap(&array[i + 1], &array[high]);
   
-  // return the partition point
+  // restituisce il punto di partizione
   return (i + 1);
 }
 
 void quickSort(Word_occurrence *array, int low, int high) {
-  if (low < high) {
+  // Creazione di una pila ausiliaria per simulare la ricorsione
+  int stack[high - low + 1];
+  
+  // Inizializzazione della cima della pila
+  int top = -1;
+  
+  // Push iniziale dei valori di low e high sulla pila
+  stack[++top] = low;
+  stack[++top] = high;
+  
+  // Finché la pila non è vuota
+  while (top >= 0) {
+    // Pop dei valori di low e high dalla pila
+    high = stack[top--];
+    low = stack[top--];
     
-    // find the pivot element such that
-    // elements smaller than pivot are on left of pivot
-    // elements greater than pivot are on right of pivot
+    // Trovare l'elemento pivot
     int pi = partition(array, low, high);
     
-    // recursive call on the left of pivot
-    quickSort(array, low, pi - 1);
+    // Se ci sono elementi a sinistra del pivot, push dei loro indici sulla pila
+    if (pi - 1 > low) {
+      stack[++top] = low;
+      stack[++top] = pi - 1;
+    }
     
-    // recursive call on the right of pivot
-    quickSort(array, pi + 1, high);
+    // Se ci sono elementi a destra del pivot, push dei loro indici sulla pila
+    if (pi + 1 < high) {
+      stack[++top] = pi + 1;
+      stack[++top] = high;
+    }
   }
 }
+
 
 void sort_occurrences(Word_occurrence ** p_occurrences, int n){
      
