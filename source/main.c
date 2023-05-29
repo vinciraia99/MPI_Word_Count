@@ -15,7 +15,7 @@
 #define EXIT_CODE_NO_PROC 3
 #define EXIT_CODE_DIR_NOT_EXIST 4
 #define CSV_OUTPUT "word_count.csv"
-//#define DEBUG
+#define DEBUG
 #define BENCHMARK
 
 int main (int argc, char *argv[]){
@@ -185,10 +185,10 @@ int main (int argc, char *argv[]){
             for(int j=0; j< words_in_message; j++){
                 lookup = g_hash_table_lookup(hash,occurrences[j].parola);
                 if(lookup == NULL){
-                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].parola));
+                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].numero_ripetizioni));
                 }
                 else{
-                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].parola + GPOINTER_TO_INT(lookup)));
+                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].numero_ripetizioni + GPOINTER_TO_INT(lookup)));
                 }
             } 
         }

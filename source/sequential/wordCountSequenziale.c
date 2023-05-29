@@ -6,7 +6,6 @@
 #define MAX_WORD_LENGTH 100
 #define MAX_FILENAME_LENGTH 256
 #define CSV_OUTPUT_SEQ "word_count_seq.csv"
-#define DEBUG
 
 typedef struct {
     char word[MAX_WORD_LENGTH];
@@ -58,7 +57,7 @@ void processDirectory(char* directory, WordCount* wordCounts, int* count) {
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_type == DT_REG) {  // Considera solo file regolari
             char filename[MAX_FILENAME_LENGTH];
-            snprintf(filename, sizeof(filename), "%s/%s", directory, entry->d_name);
+            snprintf(filename, sizeof(filename)+1, "%s/%s", directory, entry->d_name);
             processFile(filename, wordCounts, count);
         }
     }
@@ -73,24 +72,47 @@ void writeCSV(char* filename, WordCount* wordCounts, int count) {
         return;
     }
 
-    fprintf(file, "Parola,Occorrenze\n");
+    fprintf(file, "\"Parola\",\"Frequenza\"\n");
     for (int i = 0; i < count; i++) {
-        fprintf(file, "%s,%d\n", wordCounts[i].word, wordCounts[i].count);
+        fprintf(file, "\"%s\",\"%d\"\n", wordCounts[i].word, wordCounts[i].count);
     }
 
     fclose(file);
 }
 
+void quicksort(WordCount* wordCounts, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+
+    int pivot = wordCounts[right].count;
+    int i = left - 1;
+
+    for (int j = left; j < right; j++) {
+        if (wordCounts[j].count >= pivot) {
+            i++;
+            WordCount temp = wordCounts[i];
+            wordCounts[i] = wordCounts[j];
+            wordCounts[j] = temp;
+        }
+    }
+
+    WordCount temp = wordCounts[i + 1];
+    wordCounts[i + 1] = wordCounts[right];
+    wordCounts[right] = temp;
+
+    int partition = i + 1;
+
+    quicksort(wordCounts, left, partition - 1);
+    quicksort(wordCounts, partition + 1, right);
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        #ifdef DEBUG
-            printf("Nessuna cartella passata come argomento\n");
-        #endif
+        printf("Nessuna cartella passata come argomento\n");
         return 1;
     }else{
-        #ifdef DEBUG
-            printf("Utilizzo la cartella: %s\n", argv[1]);
-        #endif
+        printf("Utilizzo la cartella: %s\n", argv[1]);
     }
 
     char *directory = argv[1];
@@ -100,14 +122,14 @@ int main(int argc, char *argv[]) {
 
     processDirectory(directory, wordCounts, &count);
 
+    quicksort(wordCounts, 0, count - 1);
+
     char outputFilename[MAX_FILENAME_LENGTH];
-    snprintf(outputFilename, sizeof(outputFilename), CSV_OUTPUT_SEQ, directory);
+    snprintf(outputFilename, sizeof(outputFilename), "%s", CSV_OUTPUT_SEQ);
 
     writeCSV(outputFilename, wordCounts, count);
 
-    #ifdef DEBUG
-        printf("Word count completato! Risultati salvati in %s\n", outputFilename);
-    #endif
+    printf("Word count completato! Risultati salvati in %s\n", outputFilename);
 
     return 0;
 }

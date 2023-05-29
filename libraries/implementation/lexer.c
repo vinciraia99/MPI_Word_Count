@@ -1,6 +1,6 @@
 #include "lexer.h"
 
-//#define DEBUG 
+#define DEBUG 
 
 int check_if_end_char(char ch){
 
