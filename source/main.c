@@ -15,7 +15,8 @@
 #define EXIT_CODE_NO_PROC 3
 #define EXIT_CODE_DIR_NOT_EXIST 4
 #define CSV_OUTPUT "word_count.csv"
-#define DEBUG
+//#define DEBUG
+#define BENCHMARK
 
 int main (int argc, char *argv[]){
 
@@ -26,6 +27,11 @@ int main (int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD, &numproc);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Status Stat;
+    #ifdef BENCHMARK
+        double start,end;
+        MPI_Barrier(MPI_COMM_WORLD); /* tutti i processi sono inizializzati */
+        start = MPI_Wtime();
+    #endif
 
     //Creazione del datatype per il chunk 
     MPI_Datatype chunktype;
@@ -226,8 +232,14 @@ int main (int argc, char *argv[]){
 
     MPI_Type_free(&chunktype);
     MPI_Type_free(&wordtype);
-    MPI_Finalize();
-
+    #ifdef BENCHMARK
+        MPI_Barrier(MPI_COMM_WORLD); /* tutti i processi hanno terminato */
+        end = MPI_Wtime();
+        MPI_Finalize();
+        if (rank == 0) { /* Master node scrive su stdout il tempo o su file */
+            printf("Time in ms = %f\n", end-start);
+        }
+    #endif
     return 0;
 
 }

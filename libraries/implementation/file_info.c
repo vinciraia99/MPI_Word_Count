@@ -8,7 +8,7 @@
 #include "file_info.h"
 #include "log.h"
 
-#define DEBUG 
+//#define DEBUG 
 
 //Riceve in input un percorso e restuisce la struttura file_ifno contenente la dimensione del file espressa in byte e il percorso del file espresso come stringa
 File_info * get_file_info(char * path){
