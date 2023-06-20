@@ -7,7 +7,6 @@ IMPLEMENTATIONDIR = ../libraries/implementation
 
 all : main.o file_info.o chunk.o log.o lexer.o word.o
 	mpicc main.o chunk.o file_info.o log.o lexer.o word.o -o wordCount.out $(CFLAGS) $(CLIBS)
-	rm -f *.o
 
 main.o :
 	mpicc $(CXXFLAGS) -c main.c $(CFLAGS) $(CLIBS)
@@ -29,3 +28,6 @@ word.o:
 	
 clean: 
 	rm -f *.out *.o
+
+clean_o:
+	rm -f *.o

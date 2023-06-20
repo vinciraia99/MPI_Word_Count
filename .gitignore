@@ -4,3 +4,7 @@
 *.out
 *.o
 run.sh
+/file_di_testo/file_benchmark
+/file_di_testo/strong_benchmark
+strong_result.txt
+weak_result.txt

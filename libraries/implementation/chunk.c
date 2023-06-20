@@ -1,7 +1,7 @@
 #include "chunk.h"  
 #include <stdio.h> 
 
-#define DEBUG 
+//#define DEBUG 
 
 // Funzione per creare un'istanza di Chunk
 Chunk* create_file_chunk(double start_offset , double end_offset, char * path){

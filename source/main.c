@@ -15,7 +15,7 @@
 #define EXIT_CODE_NO_PROC 3
 #define EXIT_CODE_DIR_NOT_EXIST 4
 #define CSV_OUTPUT "word_count.csv"
-#define DEBUG
+//#define DEBUG
 #define BENCHMARK
 
 int main (int argc, char *argv[]){

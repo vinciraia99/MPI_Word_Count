@@ -14,13 +14,6 @@ void print_file_chunk(Chunk * chunk){
     printf("path: %s\n\n" , chunk->path);
 }
 
-void printn_file_chunk(Chunk chunk){
-    printf("start_offset: %f\n" , chunk.start_offset);
-    printf("end_offset: %f\n" , chunk.end_offset);
-    printf("path: %s\n\n" , chunk.path);
-
-}
-
 void print_file_chunk_array(Chunk * chunks, int num_elements){
     for (int i = 0; i< num_elements; i++){
         printn_file_chunk(chunks[i]);
@@ -28,7 +21,7 @@ void print_file_chunk_array(Chunk * chunks, int num_elements){
 
 }
 
-void print_received_chunks(Chunk * chunks, int num_elements, int rank){
+void print_received_chunk(Chunk * chunk, int num_elements, int rank){
 
     char file_output[50];
     char rankc[2];
@@ -40,9 +33,9 @@ void print_received_chunks(Chunk * chunks, int num_elements, int rank){
 
     for (int i = 0; i< num_elements; i++){
         fprintf(out,"[Worker  %d]\n", rank);
-        fprintf(out,"start_offset %f\n" , chunks[i].start_offset);
-        fprintf(out,"end_offset %f\n" , chunks[i].end_offset);
-        fprintf(out,"path %s\n\n" , chunks[i].path);
+        fprintf(out,"start_offset %f\n" , chunk[i].start_offset);
+        fprintf(out,"end_offset %f\n" , chunk[i].end_offset);
+        fprintf(out,"path %s\n\n" , chunk[i].path);
     }
 
 }
