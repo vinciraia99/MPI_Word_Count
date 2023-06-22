@@ -10,8 +10,8 @@
 
 //#define DEBUG 
 
-//Riceve in input un percorso e restuisce la struttura file_ifno contenente la dimensione del file espressa in byte e il percorso del file espresso come stringa
-File_info * get_file_info(char * path){
+//Riceve in input un percorso e restuisce la struttura file_info contenente la dimensione del file espressa in byte e il percorso del file espresso come stringa
+File_info * get_file_info_from_path(char * path){
 
     struct stat sb;
     File_info * file = (File_info *) malloc(sizeof(File_info));
@@ -56,7 +56,7 @@ GList * get_files_info_from_dir(char * dir_paths, double *files_size){
                     printf("Nome file:%s \n",file_path);
                 #endif
             
-                temp_info = get_file_info(file_path);
+                temp_info = get_file_info_from_path(file_path);
                 *files_size += temp_info->size;
                 
                 list = g_list_append(list, temp_info);

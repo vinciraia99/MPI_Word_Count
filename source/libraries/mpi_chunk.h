@@ -4,7 +4,7 @@
 #include "mpi.h"
 
 #define MAX_PACK_SIZE 8192
-#define COMM_TAG 88
+#define COMM_TAG 10
 #define MASTER_RANK 0
 
 #ifndef CHUNK

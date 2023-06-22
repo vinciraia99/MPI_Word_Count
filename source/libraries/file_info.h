@@ -8,7 +8,7 @@ typedef struct File_info{
 
 } File_info;
 
-File_info * get_file_info(char * path);
+File_info * get_file_info_from_path(char * path);
 
 GList * get_files_info_from_dir(char * dir_paths, double *files_size);
 

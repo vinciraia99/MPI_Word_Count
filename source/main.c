@@ -9,7 +9,7 @@
 #include "log.h"
 #include "wordlist.h"
 
-#define COMM_TAG 88
+#define COMM_TAG 10
 #define MASTER_RANK 0
 #define EXIT_CODE_NO_DIR 2
 #define EXIT_CODE_NO_PROC 3
@@ -59,15 +59,15 @@ int main (int argc, char *argv[]){
         //Ottengo informazioni sui file all'interno della cartella (dimensione e nome)
         double total_size = 0;
         GList * files;
-        
         files = get_files_info_from_dir(argv[1], &total_size);
+        
         if(files == NULL){
             MPI_Abort(MPI_COMM_WORLD, EXIT_CODE_DIR_NOT_EXIST);
             MPI_Finalize();
             return 0;
         }
-        int temp = total_size / (numproc-1);
-        double partition_size = temp;
+  
+        double partition_size =  total_size / (numproc-1);
         int remnant = (int) total_size % (numproc-1);
     
         //Produzione dei chunk per ogni processo che non sia quello master
@@ -80,13 +80,11 @@ int main (int argc, char *argv[]){
 
         //La size dei chunk per ogni processo può essere al più uguale al numero dei file
         Chunk ** chunks_array;
-         //Creo una matrice di chunk, un array per ogni processo
+        //Creo una matrice di chunk, un array per ogni processo
         MPI_Alloc_mem(sizeof(Chunk *) * (numproc -1), MPI_INFO_NULL , &chunks_array);
 
-        double file_offset, to_assign = 0;
-        double remaining_file;
-        int task_to_assign = 0, chunk_count = 0;
-        int distr_remnant = 1;
+        double file_offset,remaining_file, partition_size_to_assign = 0;
+        int task_to_assign = 0, chunk_count = 0, distr_remnant = 1;
 
         int pack_size;
     
@@ -102,23 +100,23 @@ int main (int argc, char *argv[]){
             remaining_file = currentFileInfo->size;
 
             while(remaining_file > 0){
-                if(to_assign == 0){
+                if(partition_size_to_assign == 0){
                     if(chunk_count!=0){
                         MPI_Isend(chunks_array[task_to_assign - 1], chunk_count, chunktype, task_to_assign, COMM_TAG, MPI_COMM_WORLD, &(requests[task_to_assign-1]));
                     }  
-                    to_assign = partition_size;
+                    partition_size_to_assign = partition_size;
                     task_to_assign++; 
                     MPI_Alloc_mem(sizeof(Chunk)* file_nums, MPI_INFO_NULL , &(chunks_array[task_to_assign - 1]));
                     chunk_count = 0;
                 }
 
                 if(distr_remnant && task_to_assign == numproc -1){
-                    to_assign = partition_size + remnant;
+                    partition_size_to_assign = partition_size + remnant;
                     distr_remnant = 0;
                 }
 
                 //se la grandezza del file è più piccolo o uguale di quello da assgenare lo assegno tutto
-                if(remaining_file <= to_assign){
+                if(remaining_file <= partition_size_to_assign){
                     chunks_array[task_to_assign - 1][chunk_count].start_offset = file_offset;
                     chunks_array[task_to_assign - 1][chunk_count].end_offset = file_offset + remaining_file;
                     strncpy(chunks_array[task_to_assign - 1][chunk_count].path , currentFileInfo->path, 260);
@@ -127,21 +125,21 @@ int main (int argc, char *argv[]){
                         printf("Task to assign: %d \t",task_to_assign - 1);
                         print_file_chunk(chunks_array[task_to_assign - 1]);
                     #endif
-                    to_assign -= remaining_file;
+                    partition_size_to_assign -= remaining_file;
                     remaining_file = 0;
                 }
                 else{ // altrimenti devo assegnare solo una porzione
                     chunks_array[task_to_assign - 1][chunk_count].start_offset = file_offset;
-                    chunks_array[task_to_assign - 1][chunk_count].end_offset = file_offset + to_assign;
+                    chunks_array[task_to_assign - 1][chunk_count].end_offset = file_offset + partition_size_to_assign;
                     strncpy(chunks_array[task_to_assign - 1][chunk_count].path , currentFileInfo->path, 260);
                     chunk_count++;
                     #ifdef DEBUG
                         printf("Task to assign: %d \t",task_to_assign - 1);
                         print_file_chunk(chunks_array[task_to_assign - 1]);
                     #endif
-                    file_offset += to_assign;
-                    remaining_file -= to_assign;
-                    to_assign = 0;
+                    file_offset += partition_size_to_assign;
+                    remaining_file -= partition_size_to_assign;
+                    partition_size_to_assign = 0;
                 }   
             }
 

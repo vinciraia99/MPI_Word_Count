@@ -1,9 +1,9 @@
 CFLAGS = $(shell pkg-config --cflags glib-2.0)
 CLIBS = $(shell pkg-config --libs glib-2.0)
 
-LIBDIR = ../libraries
+LIBDIR = libraries
 CXXFLAGS += -I$(LIBDIR)
-IMPLEMENTATIONDIR = ../libraries/implementation
+IMPLEMENTATIONDIR = libraries/implementation
 
 all : main.o file_info.o mpi_chunk.o log.o wordlist.o word.o
 	mpicc main.o mpi_chunk.o file_info.o log.o wordlist.o word.o -o word_count.out $(CFLAGS) $(CLIBS)
