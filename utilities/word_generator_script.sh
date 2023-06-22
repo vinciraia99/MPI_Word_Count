@@ -1,6 +1,8 @@
 #!/bin/bash
+c_file="word_generator.c"
+out_file="word_generator.out"
 
-gcc -o wordGenerator.out wordGenerator.c
+gcc -o $out_file $c_file
 file_size=8
 file_benchmark="file_benchmark"
 if [ -d "../file_di_testo/$file_benchmark" ]; then
@@ -12,7 +14,7 @@ fi
 while [ $file_size -le 184 ]
 do
     file_name="${file_size}MB.txt"
-    ./wordGenerator.out $file_size $file_name
+    ./$out_file $file_size $file_name
     mkdir ../file_di_testo/$file_benchmark/$file_size
     mv $file_name ../file_di_testo/$file_benchmark/$file_size
     file_size=$((file_size + 8))
@@ -23,6 +25,6 @@ fi
 if [ ! -d "../file_di_testo/strong_benchmark" ]; then
         mkdir ../file_di_testo/strong_benchmark
 fi
-./wordGenerator.out 512 strong.txt
+./$out_file 512 strong.txt
 mv strong.txt ../file_di_testo/strong_benchmark/strong.txt
-rm wordGenerator.out
+rm $out_file
