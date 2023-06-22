@@ -1,5 +1,6 @@
 #!/bin/bash
 output_file="weak_result.txt"
+file_out="word_count.out"
 if [ -f "$output_file" ]; then
     rm "$output_file"
 fi
@@ -22,15 +23,15 @@ else
         echo "Esecuzione con $num_processors processori" >> "$output_file"
         
         echo "Prima run" >> "$output_file"
-        mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test/$file >> "$output_file"
+        mpirun -np $num_processors --allow-run-as-root --oversubscribe $file_out $path_file_test/$file >> "$output_file"
         wait
         rm word_count.csv 
         echo "Seconda run" >> "$output_file"
-        mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test/$file >> "$output_file"
+        mpirun -np $num_processors --allow-run-as-root --oversubscribe $file_out $path_file_test/$file >> "$output_file"
         wait
         rm word_count.csv 
         echo "Terza run" >> "$output_file"
-        mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test/$file >> "$output_file"
+        mpirun -np $num_processors --allow-run-as-root --oversubscribe $file_out $path_file_test/$file >> "$output_file"
         wait
         rm word_count.csv 
         echo "=======================" >> "$output_file"  # Aggiunge una riga vuota nel file di output

@@ -56,7 +56,7 @@ Word_occurrence* create_inf_to_send(GHashTable* hash, int  *num_occ){
 
 Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_number, int rank, int * num_word){
 
-    FILE *fileDaLeggere;
+    FILE *file_to_read;
     
     char word[45];
     int n = 0, lex_num = 0;
@@ -72,26 +72,26 @@ Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_num
     for(int i = 0; i < chunk_number; i++){
 
         chunk = chunks_received[i];
-        fileDaLeggere = fopen(chunk.path , "r");
+        file_to_read = fopen(chunk.path , "r");
         #ifdef DEBUG
             printf("\nChunk offset %d: %f\n",rank,chunk.start_offset);
         #endif
-        fseek(fileDaLeggere, chunk.start_offset , SEEK_CUR);
+        fseek(file_to_read, chunk.start_offset , SEEK_CUR);
 
         //skip della prima parola se questa non è all'inizio
-        if(ftell(fileDaLeggere) != 0){ //ftell ricava la posizione corrente del seek
-            fseek(fileDaLeggere,  -1 , SEEK_CUR);
+        if(ftell(file_to_read) != 0){ //ftell ricava la posizione corrente del seek
+            fseek(file_to_read,  -1 , SEEK_CUR);
             do{
-                ch = fgetc(fileDaLeggere);
+                ch = fgetc(file_to_read);
             }while(!check_if_end_char(ch));
         }
         
         int state = 0;  
 
-        while (ftell(fileDaLeggere) < (chunk.end_offset)  || no_ended)
+        while (ftell(file_to_read) < (chunk.end_offset)  || no_ended)
         {
             
-            word[n] = fgetc(fileDaLeggere);
+            word[n] = fgetc(file_to_read);
 
             switch (state)
             {

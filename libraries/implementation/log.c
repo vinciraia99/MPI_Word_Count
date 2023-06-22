@@ -4,45 +4,23 @@
 
 //Questa funzione stampa il nome del file e la dimensione in byte
 void print_file_info(File_info *file){
-    printf("Nome del file: %s\n" , file->path);
-    printf("Dimensione del file: %ld byte\n\n", file->size);
+    printf("Name of file: %s\n" , file->path);
+    printf("Dimension of file: %ld byte\n\n", file->size);
 }
 
+// Questa funzione stampa le informazioni di un chunk 
 void print_file_chunk(Chunk * chunk){
-    printf("start_offset: %f\n" , chunk->start_offset);
-    printf("end_offset: %f\n" , chunk->end_offset);
-    printf("path: %s\n\n" , chunk->path);
+    printf("Start offset: %f\n" , chunk->start_offset);
+    printf("End offset: %f\n" , chunk->end_offset);
+    printf("Path: %s\n\n" , chunk->path);
 }
 
-void printn_file_chunk(Chunk chunk){
-    printf("start_offset: %f\n" , chunk.start_offset);
-    printf("end_offset: %f\n" , chunk.end_offset);
-    printf("path: %s\n\n" , chunk.path);
-
-}
-
+// Questa funzione stampa un array di chunk 
 void print_file_chunk_array(Chunk * chunks, int num_elements){
     for (int i = 0; i< num_elements; i++){
-        printn_file_chunk(chunks[i]);
-    }
-
-}
-
-void print_received_chunks(Chunk * chunks, int num_elements, int rank){
-
-    char file_output[50];
-    char rankc[2];
-    rankc[0] = rank + '0';
-    rankc[1] = '\0';
-    strncpy(file_output, "out", 50);
-    strncat(file_output, rankc, 50);
-    FILE * out = fopen (file_output , "w");
-
-    for (int i = 0; i< num_elements; i++){
-        fprintf(out,"[Worker  %d]\n", rank);
-        fprintf(out,"start_offset %f\n" , chunks[i].start_offset);
-        fprintf(out,"end_offset %f\n" , chunks[i].end_offset);
-        fprintf(out,"path %s\n\n" , chunks[i].path);
+        printf("Start offset: %f\n" , chunks[i].start_offset);
+        printf("End offset: %f\n" , chunks[i].end_offset);
+        printf("Path: %s\n\n" , chunks[i].path);
     }
 
 }

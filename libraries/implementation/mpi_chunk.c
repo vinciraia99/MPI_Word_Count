@@ -1,4 +1,4 @@
-#include "chunk.h"  
+#include "mpi_chunk.h"  
 #include <stdio.h> 
 
 //#define DEBUG 
@@ -36,7 +36,7 @@ void create_chunk_datatype(MPI_Datatype *chunk_type){
 }
 
 // Funzione per ricevere i chunk tramite MPI
-Chunk * probe_recv_chunks(MPI_Datatype chunk_type, MPI_Status status, int * num_chunks){
+Chunk * receive_chunks(MPI_Datatype chunk_type, MPI_Status status, int * num_chunks){
     *num_chunks = 0;
     MPI_Probe(MASTER_RANK, COMM_TAG, MPI_COMM_WORLD, &status);  // Probe per verificare la ricezione dei messaggi da parte del master
     MPI_Get_count(&status, chunk_type, num_chunks);  // Ottiene il numero di chunk da ricevere

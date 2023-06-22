@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Compila wordGenerator.c
 gcc -o wordGenerator.out wordGenerator.c
-
-# Loop per generare e lanciare i file con grandezza crescente
 file_size=8
 file_benchmark="file_benchmark"
 if [ -d "../file_di_testo/$file_benchmark" ]; then
