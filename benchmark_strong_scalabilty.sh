@@ -18,12 +18,15 @@ do
     echo "Esecuzione con $num_processors processori" >> "$output_file"
     echo "Prima run" >> "$output_file"
     mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    wait
     rm word_count.csv 
     echo "Seconda run" >> "$output_file"
     mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    wait
     rm word_count.csv 
     echo "Terza run" >> "$output_file"
     mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    wait
     echo "=======================" >> "$output_file"  # Aggiunge una riga vuota nel file di output
     rm word_count.csv 
 done
