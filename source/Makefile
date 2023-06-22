@@ -5,8 +5,8 @@ LIBDIR = ../libraries
 CXXFLAGS += -I$(LIBDIR)
 IMPLEMENTATIONDIR = ../libraries/implementation
 
-all : main.o file_info.o chunk.o log.o lexer.o word.o
-	mpicc main.o chunk.o file_info.o log.o lexer.o word.o -o wordCount.out $(CFLAGS) $(CLIBS)
+all : main.o file_info.o chunk.o log.o wordlist.o word.o
+	mpicc main.o chunk.o file_info.o log.o wordlist.o word.o -o wordCount.out $(CFLAGS) $(CLIBS)
 
 main.o :
 	mpicc $(CXXFLAGS) -c main.c $(CFLAGS) $(CLIBS)
@@ -14,8 +14,8 @@ main.o :
 log.o:
 	mpicc $(CXXFLAGS) -c $(IMPLEMENTATIONDIR)/log.c	$(CFLAGS) $(CLIBS)
 
-lexer.o:
-	mpicc $(CXXFLAGS) -c $(IMPLEMENTATIONDIR)/lexer.c	$(CFLAGS) $(CLIBS)
+wordlist.o:
+	mpicc $(CXXFLAGS) -c $(IMPLEMENTATIONDIR)/wordlist.c	$(CFLAGS) $(CLIBS)
 	
 file_info.o:
 	mpicc $(CXXFLAGS) -c $(IMPLEMENTATIONDIR)/file_info.c $(CFLAGS) $(CLIBS)

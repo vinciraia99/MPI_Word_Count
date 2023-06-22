@@ -7,7 +7,7 @@
 #include "mpi.h"
 #include "file_info.h"
 #include "log.h"
-#include "lexer.h"
+#include "wordlist.h"
 
 #define COMM_TAG 88
 #define MASTER_RANK 0
@@ -103,7 +103,6 @@ int main (int argc, char *argv[]){
 
             while(remaining_file > 0){
                 if(to_assign == 0){
-                    //se chunk_count non è zero posso inviare 
                     if(chunk_count!=0){
                         MPI_Isend(chunks_to_send[task_to_assign - 1], chunk_count, chunktype, task_to_assign, COMM_TAG, MPI_COMM_WORLD, &(requests[task_to_assign-1]));
                     }  
@@ -183,12 +182,12 @@ int main (int argc, char *argv[]){
             MPI_Alloc_mem(sizeof(Word_occurrence ) * words_in_message, MPI_INFO_NULL , &occurrences);
             MPI_Recv(occurrences, words_in_message, wordtype, stat.MPI_SOURCE, COMM_TAG, MPI_COMM_WORLD, &stat);
             for(int j=0; j< words_in_message; j++){
-                lookup = g_hash_table_lookup(hash,occurrences[j].parola);
+                lookup = g_hash_table_lookup(hash,occurrences[j].word);
                 if(lookup == NULL){
-                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].numero_ripetizioni));
+                    g_hash_table_insert(hash,occurrences[j].word,GINT_TO_POINTER (occurrences[j].number_repeats));
                 }
                 else{
-                    g_hash_table_insert(hash,occurrences[j].parola,GINT_TO_POINTER (occurrences[j].numero_ripetizioni + GPOINTER_TO_INT(lookup)));
+                    g_hash_table_insert(hash,occurrences[j].word,GINT_TO_POINTER (occurrences[j].number_repeats + GPOINTER_TO_INT(lookup)));
                 }
             } 
         }
@@ -200,15 +199,15 @@ int main (int argc, char *argv[]){
 
             lookup = g_hash_table_lookup(hash,entries[i]); 
             occ =  GPOINTER_TO_INT(lookup);
-            to_order[i].numero_ripetizioni = occ;
-            strncpy(to_order[i].parola, entries[i], sizeof(to_order[i].parola));  
+            to_order[i].number_repeats = occ;
+            strncpy(to_order[i].word, entries[i], sizeof(to_order[i].word));  
         }
 
         sort_occurrences(&to_order, length);
 
         fprintf(out, "\"Parola\",\"Frequenza\"\n");
         for(int i = 0; i< length; i++){
-            fprintf(out,"\"%s\",\"%d\"\n", to_order[i].parola, to_order[i].numero_ripetizioni);
+            fprintf(out,"\"%s\",\"%d\"\n", to_order[i].word, to_order[i].number_repeats);
         }
 
         MPI_Free_mem(occurrences);
@@ -222,7 +221,7 @@ int main (int argc, char *argv[]){
         Word_occurrence * occurrences;
         chunk_to_recv = probe_recv_chunks(chunktype, Stat, &chunk_number);
 
-        occurrences = get_lexeme_from_chunk(chunk_to_recv, chunk_number, rank, &num_occ);
+        occurrences = get_word_list_from_chunk(chunk_to_recv, chunk_number, rank, &num_occ);
         MPI_Send(occurrences, num_occ, wordtype, 0, COMM_TAG, MPI_COMM_WORLD);
 
         MPI_Free_mem(chunk_to_recv);

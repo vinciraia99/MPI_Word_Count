@@ -4,8 +4,8 @@ Word_occurrence * create_word_occurence(char * word ,int num){
 
     Word_occurrence * w = malloc(sizeof(Word_occurrence));
 
-    strncpy(w->parola, word, 46);
-    w->numero_ripetizioni = num;
+    strncpy(w->word, word, 46);
+    w->number_repeats = num;
 
     return w;
 }
@@ -44,7 +44,7 @@ void swap(Word_occurrence *a, Word_occurrence *b) {
 int partition(Word_occurrence * array, int low, int high) {
   
   // selezionare l'elemento più a destra come perno
-  int pivot = array[high].numero_ripetizioni;
+  int pivot = array[high].number_repeats;
   
   // puntatore per l'elemento maggiore
   int i = (low - 1);
@@ -52,7 +52,7 @@ int partition(Word_occurrence * array, int low, int high) {
   // attraversare ogni elemento dell'array
   // confrontarli con il pivot
   for (int j = low; j < high; j++) {
-    if (array[j].numero_ripetizioni >= pivot) {
+    if (array[j].number_repeats >= pivot) {
         
       // se viene trovato un elemento più piccolo del pivot
       // lo scambia con l'elemento maggiore indicato da i

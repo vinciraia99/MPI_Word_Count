@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "wordlist.h"
 
 //#define DEBUG 
 
@@ -11,11 +11,11 @@ int check_if_end_char(char ch){
     return 0;
 }
 
-void count_word(GHashTable* hash, char * lexeme, int * lex_counter){
+void count_word(GHashTable* hash, char * word, int * lex_counter){
 
     gpointer lookup;
     int val;
-    lookup = g_hash_table_lookup(hash,lexeme);
+    lookup = g_hash_table_lookup(hash,word);
     if(lookup == NULL){
         val = 1;
         (*lex_counter)++;
@@ -23,16 +23,14 @@ void count_word(GHashTable* hash, char * lexeme, int * lex_counter){
     else{
         val = GPOINTER_TO_INT(lookup) + 1;
     }
-    g_hash_table_insert(hash,lexeme,GINT_TO_POINTER (val));
+    g_hash_table_insert(hash,word,GINT_TO_POINTER (val));
 }
 
-//Questa funzione deve ricevere una matrice di Word_Occurrence instanziare ogni word occurrence
-//Ovviamente questo deve essere gestito da chi riceve (deve cambiare tutto).
 Word_occurrence* create_inf_to_send(GHashTable* hash, int  *num_occ){
 
     int length;
-    char ** lexems = (char **) g_hash_table_get_keys_as_array (hash , &length);
-    char * lexeme;
+    char ** word_list = (char **) g_hash_table_get_keys_as_array (hash , &length);
+    char * word;
     gpointer lookup;
     int occ;
 
@@ -41,26 +39,26 @@ Word_occurrence* create_inf_to_send(GHashTable* hash, int  *num_occ){
 
     for (int i = 0; i < length; i++)
     {
-        lexeme = lexems[i]; 
-        lookup = g_hash_table_lookup(hash,lexeme); 
+        word = word_list[i]; 
+        lookup = g_hash_table_lookup(hash,word); 
         occ =  GPOINTER_TO_INT(lookup);
-        occurrences[i].numero_ripetizioni = occ;
-        strncpy(occurrences[i].parola, lexeme, 46);  
-        free(lexeme);
+        occurrences[i].number_repeats = occ;
+        strncpy(occurrences[i].word, word, 46);  
+        free(word);
     }
 
-    free(lexems);
+    free(word_list);
     g_hash_table_destroy (hash);
  
     return occurrences;
 
 }
 
-Word_occurrence * get_lexeme_from_chunk(Chunk *chunks_received, int chunk_number, int rank, int * num_word){
+Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_number, int rank, int * num_word){
 
     FILE *fileDaLeggere;
     
-    char lexeme[45];
+    char word[45];
     int n = 0, lex_num = 0;
     int num_occ = 0;
 
@@ -93,30 +91,30 @@ Word_occurrence * get_lexeme_from_chunk(Chunk *chunks_received, int chunk_number
         while (ftell(fileDaLeggere) < (chunk.end_offset)  || no_ended)
         {
             
-            lexeme[n] = fgetc(fileDaLeggere);
+            word[n] = fgetc(fileDaLeggere);
 
             switch (state)
             {
                 case 0: 
-                    if(isalpha(lexeme[n]) || isdigit(lexeme[n])){
+                    if(isalpha(word[n]) || isdigit(word[n])){
                         state = 1;
                         n++;
                         no_ended = 1;   
                     }
                 break; 
                 case 1: 
-                    if(isalpha(lexeme[n]) || isdigit(lexeme[n])){
+                    if(isalpha(word[n]) || isdigit(word[n])){
                         state = 1;
                         n++ ; 
                         no_ended = 1; 
                     }
                     else{
-                        if(check_if_end_char(lexeme[n])){
-                            lexeme[n] = '\0';
-                            for(int j = 0; lexeme[j]; j++){
-                                lexeme[j] = tolower(lexeme[j]);
+                        if(check_if_end_char(word[n])){
+                            word[n] = '\0';
+                            for(int j = 0; word[j]; j++){
+                                word[j] = tolower(word[j]);
                             }
-                            count_word(hash , strdup(lexeme), &lex_num);
+                            count_word(hash , strdup(word), &lex_num);
                             n = 0;
                             state = 0;
                             no_ended = 0;

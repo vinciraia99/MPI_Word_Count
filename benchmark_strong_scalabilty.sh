@@ -5,6 +5,7 @@ if [ -f "$output_file" ]; then
 fi
 echo Installo le dipendenze e compilo il codice..
 cd source
+chmod +x install_dependency_and_compile.sh
 ./install_dependency_and_compile.sh
 
 
@@ -16,13 +17,13 @@ do
     echo "Esecuzione con $num_processors processori"
     echo "Esecuzione con $num_processors processori" >> "$output_file"
     echo "Prima run" >> "$output_file"
-    mpirun -np $num_processors --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
     rm word_count.csv 
     echo "Seconda run" >> "$output_file"
-    mpirun -np $num_processors --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
     rm word_count.csv 
     echo "Terza run" >> "$output_file"
-    mpirun -np $num_processors --oversubscribe wordCount.out $path_file_test >> "$output_file"
+    mpirun -np $num_processors --allow-run-as-root --oversubscribe wordCount.out $path_file_test >> "$output_file"
     echo "=======================" >> "$output_file"  # Aggiunge una riga vuota nel file di output
     rm word_count.csv 
 done
