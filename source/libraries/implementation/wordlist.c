@@ -11,14 +11,14 @@ int check_if_end_char(char ch){
     return 0;
 }
 
-void count_word(GHashTable* hash, char * word, int * lex_counter){
+void count_word(GHashTable* hash, char * word, int * word_counter){
 
     gpointer lookup;
     int val;
     lookup = g_hash_table_lookup(hash,word);
     if(lookup == NULL){
         val = 1;
-        (*lex_counter)++;
+        (*word_counter)++;
     }
     else{
         val = GPOINTER_TO_INT(lookup) + 1;
@@ -67,7 +67,7 @@ Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_num
     GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
     Word_occurrence * occurrences;
 
-    int no_ended= 0;
+    int flag_word_not_terminate= 0;
 
     for(int i = 0; i < chunk_number; i++){
 
@@ -88,7 +88,7 @@ Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_num
         
         int state = 0;  
 
-        while (ftell(file_to_read) < (chunk.end_offset)  || no_ended)
+        while (ftell(file_to_read) < (chunk.end_offset)  || flag_word_not_terminate)
         {
             
             word[n] = fgetc(file_to_read);
@@ -99,14 +99,14 @@ Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_num
                     if(isalpha(word[n]) || isdigit(word[n])){
                         state = 1;
                         n++;
-                        no_ended = 1;   
+                        flag_word_not_terminate = 1;   
                     }
                 break; 
                 case 1: 
                     if(isalpha(word[n]) || isdigit(word[n])){
                         state = 1;
                         n++ ; 
-                        no_ended = 1; 
+                        flag_word_not_terminate = 1; 
                     }
                     else{
                         if(check_if_end_char(word[n])){
@@ -117,7 +117,7 @@ Word_occurrence * get_word_list_from_chunk(Chunk *chunks_received, int chunk_num
                             count_word(hash , strdup(word), &lex_num);
                             n = 0;
                             state = 0;
-                            no_ended = 0;
+                            flag_word_not_terminate = 0;
                         }  
                     }
                 break;

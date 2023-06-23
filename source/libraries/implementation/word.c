@@ -4,7 +4,7 @@ Word_occurrence * create_word_occurence(char * word ,int num){
 
     Word_occurrence * w = malloc(sizeof(Word_occurrence));
 
-    strncpy(w->word, word, 46);
+    strncpy(w->word, word, MAXSTRING);
     w->number_repeats = num;
 
     return w;
@@ -24,7 +24,7 @@ void create_word_datatype(MPI_Datatype *wordtype){
     MPI_Type_get_extent(MPI_INT, &lb, &extent);
     offsets[1] = 1 * extent;
     oldtypes[1] = MPI_CHAR;
-    blockcounts[1] = 46;
+    blockcounts[1] = MAXSTRING;
 
 
     MPI_Type_create_struct(2, blockcounts, offsets, oldtypes, wordtype);

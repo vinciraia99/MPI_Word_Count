@@ -1,7 +1,6 @@
-casa
-casa
+casa casa gatto gatto
 cane
-gatto
+gatto gatto gatto gatto 
 albero
 albero
 albero
@@ -20,7 +19,7 @@ libro
 penna
 penna
 penna
-tavolo
+tavolo tavolo
 tavolo
 tavolo
 computer

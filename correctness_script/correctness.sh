@@ -15,7 +15,8 @@ do
 
     echo
     if [[ $(diff <(sort word_count.csv) <(sort oracolo.csv)) ]]; then
-        echo "Differenze trovate."
+        echo "Differenze trovate!"
+        exit 1
     else
         echo "Differenze non trovate."
     fi

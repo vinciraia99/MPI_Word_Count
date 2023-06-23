@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include "mpi.h"
 
+#define MAXSTRING 48
+
 typedef struct Word_occurrence{
 
     int number_repeats;
-    char word[46];
+    char word[MAXSTRING];
 
 } Word_occurrence;
 
