@@ -12,13 +12,10 @@
     typedef struct Chunk{
         double start_offset;
         double end_offset;
-        char path[260];
-
+        char path[300];
     } Chunk;
 #endif
 
 Chunk* create_chunk(double start_offset , double end_offset, char * path);
 
 void create_chunk_datatype(MPI_Datatype *chunktype);
-
-Chunk * receive_chunks(MPI_Datatype chunktype, MPI_Status Stat, int * chunk_number);

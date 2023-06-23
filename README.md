@@ -70,5 +70,101 @@ Il programma verifica tre condizioni necessarie per proseguire e fornisce in bas
 - Se i processi che lanciano il programma sono <2 viene restuito un **exit status corrispondente a 3**
 - Se la directory data come argomento non esiste realmente viene restituito un **exit status corrispondente a 4**
 
-### Step 1: Come vengono divisi i file
+### Step 1: Come vengono divisi i file e salvati
+I file presi in input vengono divisi dal MASTER in partizioni denominate Chunk. Con i file presi in input viene ricava dimensione in byte di ogni file utilizzando l'istruzione: 
+
+```
+File_info * get_file_info_from_path(char * path){
+
+    struct stat sb;
+    File_info * file = (File_info *) malloc(sizeof(File_info));
+
+    if(stat(path, &sb) != -1){
+        file->size = sb.st_size;
+        file->path = malloc(sizeof(char) * strlen(path) + 1);
+        strncpy(file->path ,path , strlen(path)+1);
+    }
+
+    return file;
+    
+}
+```
+>L'istruzione è presente nel file [file_info.c](source/libraries/implementation/file_info.c)
+
+Dopodichè somma la dimensione di ogni file per ottenere la taglia totale dell'input da dividere tra i processi.
+
+```
+double partition_size = (int)  total_size / (numproc-1);
+```
+>L'istruzione è presente nel file [main.c](source/main.c)
+
+Ora il programma deve distribuire i file ai processi SLAVE. Per farlo divide il totale per ogni processo e se la taglia totale non è un multiplo deli numeri di SLAVE si assegnano i byte in "eccesso" all'ultimo processo. 
+
+Dopo aver diviso i vari blocchi da assegnare ad ogni processo il MASTER scrive lo start offset, l'end offset e il path del file all'interno di una struct:
+
+```
+typedef struct Chunk{
+    double start_offset;
+    double end_offset;
+    char path[300];
+} Chunk;
+```
+>L'istruzione è presente nel file [main.c](source/main.c)
+
+Una volta calcolati li carica in un array "`chunks_array`" 
+### Step 2: Come vengono inviati i chunk creati
+Ebbene notare che il processo MASTER per non perdere tempo non calcola i chunk e poi li invia ma li invia non appena un chunk viene prodotto ai processi SLAVE in ordine di rank.
+
+Per non rimanere in attesa l'invio dei chunk avviene in maniera asincrona con la funzione MPI_Isend. In questo modo il MASTER può continuare il calcolo dei chunk per i restanti processi senza fermarsi.
+
+```
+MPI_Isend(chunks_array[task_to_assign - 1], chunk_count, chunktype, task_to_assign, COMM_TAG, MPI_COMM_WORLD, &(requests[task_to_assign-1]));
+```
+>L'istruzione è presente nel file [main.c](source/main.c)
+
+**La documentazione raccomanda** di non modificare il buffer inviato finchè non si è sicuri che l'operazione di invio sia stata completata, per tale motivo, ogni **SLAVE** viene allocato un apposito buffer.
+
+```
+MPI_Probe(MASTER_RANK, COMM_TAG, MPI_COMM_WORLD, &Stat);  
+
+MPI_Get_count(&Stat, chunktype, &chunk_number); 
+
+MPI_Alloc_mem(sizeof(Chunk ) * (chunk_number), MPI_INFO_NULL , &chunk_to_recv);
+
+MPI_Recv(chunk_to_recv, chunk_number, chunktype, MASTER_RANK, COMM_TAG, MPI_COMM_WORLD, &Stat); 
+```
+
+Una volta inviati i chunk, il **MASTER** attende che tutte le operazioni di invio siano completate utilizzando MPI_Waitall. 
+```
+MPI_Waitall(numtasks - 1, reqs , MPI_STATUSES_IGNORE);
+```
+
+Infine dealloca tutti buffe che sono stati allocatri dinamicamente.
+
+```
+ for(int i = 0; i< numproc -1; i++){
+            MPI_Free_mem(chunks_array[i]);
+        }
+MPI_Free_mem(chunks_array);
+free_files_info(files, file_nums);
+```
+`free_files_info` è una funzione che svuota la lista di file
+
+```
+void free_files_info(GList * list, int num){
+
+    GList * elem = list;
+    for(int i=0; i<num; i++){
+            File_info * f = elem->data;
+            #ifdef DEBUG
+                printf("File che viene cancellato:\n");
+                print_file_info(f);
+            #endif
+            free(f->path);
+            free(elem->data);
+            elem = elem->next;
+    }
+    g_list_free(list);
+}
+```
 

@@ -68,7 +68,7 @@ int main (int argc, char *argv[]){
             return 0;
         }
   
-        double partition_size =  total_size / (numproc-1);
+        double partition_size = (int)  total_size / (numproc-1);
         int remnant = (int) total_size % (numproc-1);
     
         //Produzione dei chunk per ogni processo che non sia quello master
@@ -155,9 +155,9 @@ int main (int argc, char *argv[]){
          
         MPI_Isend(chunks_array[task_to_assign - 1], chunk_count, chunktype, task_to_assign, COMM_TAG, MPI_COMM_WORLD, &(requests[task_to_assign-1]));
 
+        //Attende i processi
         MPI_Waitall(numproc - 1, requests , MPI_STATUSES_IGNORE);
 
-        //Mentre i worker lavorano il master può deallocare tutto ciò che non serve
         MPI_Free_mem(requests);
         for(int i = 0; i< numproc -1; i++){
             MPI_Free_mem(chunks_array[i]);
@@ -218,10 +218,14 @@ int main (int argc, char *argv[]){
     }
     else{
 
-        Chunk * chunk_to_recv;
+        Chunk * chunk_to_recv = NULL;
         int chunk_number = 0, num_occ = 0;
         Word_occurrence * occurrences;
-        chunk_to_recv = receive_chunks(chunktype, Stat, &chunk_number);
+
+        MPI_Probe(MASTER_RANK, COMM_TAG, MPI_COMM_WORLD, &Stat);  // Probe per verificare la ricezione dei messaggi da parte del master
+        MPI_Get_count(&Stat, chunktype, &chunk_number);  // Ottiene il numero di chunk da ricevere
+        MPI_Alloc_mem(sizeof(Chunk ) * (chunk_number), MPI_INFO_NULL , &chunk_to_recv);  // Alloca la memoria per i chunk da ricevere
+        MPI_Recv(chunk_to_recv, chunk_number, chunktype, MASTER_RANK, COMM_TAG, MPI_COMM_WORLD, &Stat);  // Riceve i chunk
 
         occurrences = get_word_list_from_chunk(chunk_to_recv, chunk_number, rank, &num_occ);
         MPI_Send(occurrences, num_occ, wordtype, 0, COMM_TAG, MPI_COMM_WORLD);

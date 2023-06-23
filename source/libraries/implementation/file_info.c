@@ -10,7 +10,7 @@
 
 //#define DEBUG 
 
-//Riceve in input un percorso e restuisce la struttura file_info contenente la dimensione del file espressa in byte e il percorso del file espresso come stringa
+//Riceve in input il percorso del file e restuisce la struttura file_info contenente la dimensione del file espressa in byte e il percorso del file espresso come stringa
 File_info * get_file_info_from_path(char * path){
 
     struct stat sb;
