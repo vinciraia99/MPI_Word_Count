@@ -5,9 +5,11 @@
 1. [Descrizione del problema](#descrizione-del-problema)
 2. [Soluzione proposta](#soluzione-proposta)
 3. [Struttura del progetto](#struttura-del-progetto)
-4. [Input e output del programma](#input-e-output-del-programma)
-5. [Esecuzione del programma](#esecuzione-del-programma)
-6. [Conclusioni](#conclusioni)
+4. [Implementazione](#implementazione)
+5. [Uso di MPI](#uso-di-mpi)
+6. [Correttezza & Benchmark](#correttezza--benchmark) 
+7. [Manuale d'uso](#manuale-duso)
+8. [Considerazioni finali](#considerazioni-finali)
 
 
 # Descrizione del problema
