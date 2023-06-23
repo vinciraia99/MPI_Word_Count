@@ -15,6 +15,7 @@
 #define EXIT_CODE_NO_PROC 3
 #define EXIT_CODE_DIR_NOT_EXIST 4
 #define CSV_OUTPUT "word_count.csv"
+#define MPI_MIN_PROG_AND_ARG 2
 //#define DEBUG
 //#define BENCHMARK
 
@@ -41,14 +42,14 @@ int main (int argc, char *argv[]){
     create_word_datatype(&wordtype);
 
     //se la cartella in input non esiste non si può continuare.
-    if(argc<2){
+    if(argc<MPI_MIN_PROG_AND_ARG){
         MPI_Abort(MPI_COMM_WORLD, EXIT_CODE_NO_DIR);
         MPI_Finalize();
         return 0;
     }
 
     // numero di processi sia almeno maggiore di due
-    if (numproc < 2){ 
+    if (numproc < MPI_MIN_PROG_AND_ARG){ 
         MPI_Abort(MPI_COMM_WORLD, EXIT_CODE_NO_PROC);
         MPI_Finalize();
         return 0;
