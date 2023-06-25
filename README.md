@@ -509,7 +509,7 @@ Per ricavare i seguenti dati, si è fissato un input di 503Mb e utilizzato un nu
 ## Premessa
 Tutti gli script citati sono stati pensati per essere eseguiti sul seguente docker [spagnuolocarmine/docker-mpi](https://hub.docker.com/r/spagnuolocarmine/docker-mpi)
 
-Il quale è comodamente lanciabile (Ovviamente è richiesto che docker sia installando) lanciando il comando
+Il quale è comodamente lanciabile (É richiesto che docker sia installato) lanciando il comando
 
 ```docker run -it --mount src="$(pwd)",target=/home,type=bind spagnuolocarmine/docker-mpi:latest```
 
