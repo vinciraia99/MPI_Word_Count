@@ -539,7 +539,7 @@ Dove:
 
 Dopo aver eseguito la sezione [Compilazione e installazione dipendenze necessarie](#compilazione-e-installazione-dipendenze-necessarie), il seguente comando permette l'esecuzione remota:
 
-mpirun -np NUMERO_DI_PROCESSORI --hostfile HOSTFILE word_couunt.out DIRECTORY
+mpirun -np NUMERO_DI_PROCESSORI --hostfile HOSTFILE word_count.out DIRECTORY
 
 Dove:
 
